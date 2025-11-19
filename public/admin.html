@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Chatbot Desa</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="admin_style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> Dashboard Admin Chatbot Desa</h1>
+            <p class="subtitle">Sistem Pengelolaan Pengetahuan & Monitoring</p>
+        </header>
+
+        <main>
+            <div class="grid-container">
+                <!-- Status Dokumen Card -->
+                <div class="card">
+                    <button class="toggle-btn" onclick="toggleChatbot()">Aktifkan / Nonaktifkan Chatbot</button>
+                    <p id="statusChatbot" class="aktif">Chatbot Aktif ✅</p>
+                    <h2><i class="fas fa-file-alt"></i> Status Dokumen</h2>
+                    <ul id="document-stats">
+                        <li>Total Dokumen: <span id="total-docs">-</span></li>
+                        <li>Sudah Diindex: <span id="indexed-docs">-</span></li>
+                        <li>Belum Diindex: <span id="pending-docs">-</span></li>
+                    </ul>
+                </div>
+
+                <!-- Cache Monitor Card -->
+                <div class="card" id="cache-card">
+                    <h2><i class="fas fa-memory"></i> Penggunaan Memori Cache</h2>
+                    <div class="chart-container">
+                        <canvas id="cacheChart" width="200" height="200"></canvas>
+                    </div>
+                    <p id="cache-label" class="cache-label">Memuat data cache...</p>
+                
+                    <div class="cache-actions">
+                        <button id="view-cache-btn" class="admin-button" style="background-color: #3182ce;">
+                            <i class="fas fa-folder-open"></i> Buka Cache
+                        </button>
+                        <button id="clear-cache-btn" class="admin-button" style="background-color: #e53e3e;">
+                            <i class="fas fa-trash-alt"></i> Hapus emua Cache
+                        </button>
+                    </div>
+                </div>      
+
+                <!-- Card daftar cache muncul di sini -->
+                <div class="card" id="cache-list-card" style="display: none;">
+                    <h2><i class="fas fa-database"></i> Daftar Cache Chatbot</h2>
+                    <div class="action-buttons">
+                        <button id="refresh-cache-btn" class="admin-button refresh-btn">
+                            <i class="fas fa-sync"></i> Refresh Cache
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Pertanyaan</th>
+                                    <th>Sumber</th>
+                                    <th>Frekuensi</th>
+                                    <th>Terakhir Diakses</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cache-list-body">
+                                <tr><td colspan="6" style="text-align:center; color:#777;">Belum memuat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Storage Monitor Card -->
+                <div class="card">
+                    <h2><i class="fas fa-hdd"></i> Penggunaan Storage Dokumen</h2>
+                    <div class="chart-container">
+                        <canvas id="storageChart" width="200" height="200"></canvas>
+                    </div>
+                    <p id="storage-label" class="storage-label">Memuat data storage...</p>
+                </div>
+
+                <!-- Upload Dokumen Card -->
+                <div class="card">
+                    <h2><i class="fas fa-upload"></i> Manajemen Dokumen Pengetahuan</h2>
+                    <p style="color: #718096; margin-bottom: 20px;">Upload file seperti Perdes, SOP, atau dokumen teks
+                        lainnya</p>
+
+                    <form id="upload-form">
+                        <div class="form-group">
+                            <label for="document-input">
+                                <i class="fas fa-file-pdf"></i> Pilih file (.pdf, .docx):
+                            </label>
+                            <input type="file" id="document-input" name="document" accept=".pdf,.docx" required>
+                        </div>
+                        <button type="submit" class="admin-button">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Dokumen
+                        </button>
+                    </form>
+                    <div id="upload-status" class="status-message"></div>
+
+                    <hr>
+
+                    <button id="run-indexer-btn" class="admin-button">
+                        <i class="fas fa-cogs"></i> Index Dokumen Baru
+                    </button>
+                    <div id="indexer-status" class="status-message"></div>
+                </div>
+
+                <!-- Upload Statistik Card -->
+                <div class="card">
+                    <h2><i class="fas fa-chart-bar"></i> Manajemen Data Statistik</h2>
+                    <p style="color: #718096; margin-bottom: 20px;">Kelola satu file Excel utama untuk semua data
+                        statistik</p>
+
+                    <div class="statistik-actions">
+                        <a href="/download-statistik" class="admin-button download-btn" download>
+                            <i class="fas fa-download"></i> Download File Statistik Saat Ini
+                        </a>
+                    </div>
+
+                    <form id="upload-statistik-form">
+                        <div class="form-group">
+                            <label for="statistik-input">
+                                <i class="fas fa-file-excel"></i> Upload file statistik_desa.xlsx yang baru:
+                            </label>
+                            <input type="file" id="statistik-input" name="statistik_file" accept=".xlsx,.xls" required>
+                        </div>
+                        <button type="submit" class="admin-button">
+                            <i class="fas fa-sync-alt"></i> Upload & Ganti File Statistik
+                        </button>
+                    </form>
+                    <div id="statistik-status" class="status-message"></div>
+                </div>
+            </div>
+
+            <!-- Daftar Dokumen -->
+            <div class="card list-card">
+                <h2><i class="fas fa-list"></i> Daftar Dokumen Ter-index di Sistem</h2>
+
+                <div class="action-buttons">
+                    <button id="refresh-list-btn" class="admin-button refresh-btn">
+                        <i class="fas fa-sync"></i> Refresh Daftar
+                    </button>
+                    <button id="rebuild-indexer-btn" class="admin-button">
+                        <i class="fas fa-redo-alt"></i> Index Ulang Semua Dokumen
+                    </button>
+                </div>
+                <div id="rebuild-status" class="status-message"></div>
+
+                <!-- Progress Bar -->
+                <div style="margin-top: 10px; display: none;" id="progress-container">
+                    <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
+                    <div id="progressText" style="margin-top: 5px; font-size: 14px; color: #555;"></div>
+                </div>
+
+                <div class="table-container">
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" id="search-doc" placeholder="Cari dokumen..."
+                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama File</th>
+                                <th>Status</th>
+                                <th>Waktu Upload</th>
+                                <th>Index Terakhir</th>
+                                <th>Download</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="file-list-body">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #718096;">
+                                    <i class="fas fa-spinner fa-spin"></i> Memuat daftar dokumen...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin_script.js"></script>
+    <script>
+        let cacheChart = null;
+
+        async function fetchCacheStatsAndUpdateChart() {
+            try {
+                const res = await fetch("/cache/stats");
+                const data = await res.json();
+
+                const usedKB = data.usedKB;
+                const maxKB = data.maxKB;
+                const maxMB = data.maxMB;
+                const percent = data.percent;
+
+                const usedFormatted = usedKB.toFixed(2) + " KB";
+                const maxFormatted = maxMB + " MB";
+                const percentFormatted = percent.toFixed(2) + "%";
+
+                document.getElementById('cache-label').innerText =
+                    `${usedFormatted} dari ${maxFormatted} (${percentFormatted}) digunakan`;
+
+                const ctx = document.getElementById('cacheChart').getContext('2d');
+
+                if (cacheChart) {
+                    cacheChart.data.datasets[0].data = [usedKB, maxKB - usedKB];
+                    cacheChart.update();
+                } else {
+                    cacheChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Digunakan (KB)', 'Tersisa (KB)'],
+                            datasets: [{
+                                data: [usedKB, maxKB - usedKB],
+                                backgroundColor: ['#2c5282', '#e2e8f0'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        usePointStyle: true,
+                                        padding: 20
+                                    }
+                                },
+                                title: { display: false }
+                            },
+                            cutout: '70%',
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Gagal memuat data cache:", err);
+                document.getElementById('cache-label').innerText = "Gagal memuat data cache.";
+                document.getElementById('cache-label').className = "cache-label status-error";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchCacheStatsAndUpdateChart();
+
+            // Event listener tombol "Bersihkan Cache"
+            document.getElementById("clear-cache-btn").addEventListener("click", async () => {
+                if (!confirm("Yakin ingin membersihkan cache?")) return;
+
+                const btn = document.getElementById("clear-cache-btn");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membersihkan...';
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch("/cache/clear", { method: "POST" });
+                    const result = await res.json();
+
+                    if (result.success) {
+                        alert(result.message);
+                        await fetchCacheStatsAndUpdateChart();
+                    } else {
+                        alert("Gagal membersihkan cache.");
+                    }
+                } catch (err) {
+                    console.error("Gagal membersihkan cache:", err);
+                    alert("Terjadi kesalahan saat membersihkan cache.");
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            });
+        });
+
+
+        let storageChart = null;
+
+        async function fetchStorageStatsAndUpdateChart() {
+            try {
+                const res = await fetch("/documents/storage");
+                const data = await res.json();
+
+                const usedKB = data.usedKB;
+                const maxKB = data.maxKB;
+                const percent = (usedKB / maxKB) * 100;
+
+                const usedMB = usedKB / 1024;
+                const maxMB = maxKB / 1024;
+
+                const ctx = document.getElementById('storageChart').getContext('2d');
+
+                // Tentukan warna berdasarkan penggunaan
+                let color = '#2f855a'; // hijau
+                if (percent > 85) color = '#c53030'; // merah
+                else if (percent > 60) color = '#c05621'; // orange
+
+                if (storageChart) {
+                    storageChart.data.datasets[0].data = [usedKB, maxKB - usedKB];
+                    storageChart.data.datasets[0].backgroundColor = [color, '#edf2f7'];
+                    storageChart.update();
+                } else {
+                    storageChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [usedKB, maxKB - usedKB],
+                                backgroundColor: [color, '#e2e8f0'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            rotation: -90,
+                            circumference: 180,
+                            cutout: '75%',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: false }
+                            }
+                        },
+                        plugins: [{
+                            id: 'centerText',
+                            beforeDraw(chart) {
+                                const { width, height } = chart;
+                                const { ctx } = chart;
+                                ctx.save();
+                                ctx.font = 'bold 16px Inter';
+                                ctx.fillStyle = color;
+                                ctx.textAlign = 'center';
+                                ctx.fillText(`${usedMB.toFixed(1)} MB`, width / 2, height / 2 - 8);
+                                ctx.font = '13px Inter';
+                                ctx.fillStyle = '#4a5568';
+                                ctx.fillText(`dari ${maxMB.toFixed(1)} MB`, width / 2, height / 2 + 12);
+                                ctx.restore();
+                            }
+                        }]
+                    });
+                }
+
+                document.getElementById('storage-label').innerText =
+                    `${usedMB.toFixed(1)} MB dari ${maxMB.toFixed(1)} MB (${percent.toFixed(1)}%) digunakan`;
+
+                // Update label class based on usage
+                const label = document.getElementById('storage-label');
+                label.className = 'storage-label';
+                if (percent > 85) label.classList.add('status-error');
+                else if (percent > 60) label.classList.add('status-info');
+
+            } catch (err) {
+                console.error("Gagal memuat data storage dokumen:", err);
+                document.getElementById('storage-label').innerText = "Gagal memuat data storage dokumen.";
+                document.getElementById('storage-label').className = "storage-label status-error";
+            }
+        }
+
+        // Load storage chart on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchStorageStatsAndUpdateChart();
+        });
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById("search-doc");
+            const tableBody = document.getElementById("file-list-body");
+
+            searchInput.addEventListener("input", () => {
+                const filter = searchInput.value.toLowerCase();
+                const rows = tableBody.getElementsByTagName("tr");
+
+                for (let i = 0; i < rows.length; i++) {
+                    let fileNameCell = rows[i].getElementsByTagName("td")[1]; // kolom Nama File
+                    if (fileNameCell) {
+                        let textValue = fileNameCell.textContent || fileNameCell.innerText;
+                        rows[i].style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
+                    }
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

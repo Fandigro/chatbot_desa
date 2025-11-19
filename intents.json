@@ -1,0 +1,47 @@
+[
+  {
+    "intent": "greeting",
+    "keywords": ["hai", "halo", "hello", "assalamualaikum", "pagi", "siang", "malam", "selamat pagi", "selamat malam", "selamat siang"],
+    "response": "Hai! Aku LAAKON, Layanan Asisten desa Alas Kokon 😊 Ada yang bisa kubantu?"
+  },
+  {
+    "intent": "help",
+    "keywords": ["bisa bantu apa", "fitur", "ngapain", "apa saja yang bisa dilakukan", "kamu bisa apa", "fitur kamu", "fungsimu apa"],
+    "response": "Aku bisa bantu cari informasi jumlah penduduk, usia, pendidikan, agama, fasilitas umum, hingga tentang apa saja desa Alas Kokon."
+  },
+  {
+    "intent": "definition",
+    "keywords": ["statistik desa", "fungsi statistik", "pengertian statistik desa", "data desa itu apa", "apa itu statistik"],
+    "response": "Statistik desa adalah kumpulan data tentang jumlah penduduk, pendidikan, agama, fasilitas umum, dan kondisi sosial di tingkat desa."
+  },
+  {
+    "intent": "usage",
+    "keywords": ["cara pakai", "gimana pakainya", "bagaimana menggunakan", "cara menggunakannya", "gimana cara pakai", "contoh pertanyaan"],
+    "response": "Tinggal ketik pertanyaan seperti: 'Berapa jumlah penduduk laki-laki?' atau 'Ada berapa masjid di Desa ?' Aku akan bantu jawab!"
+  },
+  {
+    "intent": "goodbye",
+    "keywords": ["makasih", "terima kasih", "thank you", "sampai jumpa", "dadah", "bye", "cukup"],
+    "response": "Sama-sama! Senang bisa membantu 😊 Kalau butuh bantuan lagi, tinggal panggil ya!"
+  },
+  {
+    "intent": "identity",
+    "keywords": ["siapa kamu", "namamu siapa", "kamu siapa", "kamu dari mana", "asalmu dari mana"],
+    "response": "Aku LAAKON, Layanan Asisten Alas Kokon desa Alas Kokon. Tugasku membantu menjawab pertanyaan kamu seputar data dan dokumen desa 📊"
+  },
+  {
+    "intent": "out_of_scope",
+    "keywords": ["udah nikah", "pacar", "makan apa", "hobimu", "suka siapa", "umurmu", "cantik gak", "ganteng gak", "main gak", "nongkrong gak", "capek gak", "bosen gak"],
+    "response": "Hehe, aku sih cuma AI yang bantuin kamu cari data desa 😅 Gak bisa pacaran, tapi bisa bantu hitung penduduk dan cari dokumen!"
+  },
+  {
+    "intent": "joke_request",
+    "keywords": ["cerita lucu", "joke", "bikin ketawa", "ngakak", "bikin lucu"],
+    "response": "Hehe, aku gak jago lawakan, tapi ini coba ya: Kenapa penduduk desa suka statistik? Karena data gak pernah bohong! 😄"
+  },
+  {
+    "intent": "thanks_ai",
+    "keywords": ["keren", "mantap", "pintar", "bagus", "oke", "top", "hebat"],
+    "response": "Terima kasih! Aku jadi semangat bantu kamu terus 😄"
+  }
+]

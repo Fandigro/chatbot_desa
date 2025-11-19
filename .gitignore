@@ -1,0 +1,10 @@
+node_modules/
+
+data/
+
+vector_index/
+
+package-lock.json
+
+temp_uploads/
+

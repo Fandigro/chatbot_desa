@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chatbot Statistik Desa</title>
+    <link rel="stylesheet" href="mystyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <button id="chat-toggle">
+        <img src="image/logo2.png" width="40" height="40" alt="Chatbot"/>
+    </button>
+
+    <div id="chatbot-container">
+        <div id="chat-header">
+            🤖 Layanan AI Desa Alas Kokon
+            <button class="close-btn">✕</button>
+        </div>
+        <div id="chat"></div>
+        <div id="input-container">
+            <form id="chat-form">
+                <input id="input" type="text" placeholder="Tulis pertanyaan..." />
+                <button type="submit" class="chat-button">Kirim</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="chat_ui_script.js" defer></script>
+</body>
+</html>
